@@ -10,4 +10,4 @@ COPY . .
 
 RUN npm run build
 
-CMD ["sh", "-c", "npm run start"]
+CMD ["sh", "-c", "npm run develop"]
