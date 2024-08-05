@@ -1,13 +1,23 @@
-FROM node:lts-slim
+# Используйте официальный образ Node.js
+FROM node:18-alpine
 
-WORKDIR /app
+# Установите рабочую директорию внутри контейнера
+WORKDIR /usr/src/app
 
-COPY *.json ./
+# Копируйте файлы пакетов в контейнер
+COPY package*.json ./
 
+# Установите зависимости
 RUN npm install
 
+# Копируйте исходный код приложения в контейнер
 COPY . .
 
+# Соберите приложение
 RUN npm run build
 
-CMD ["sh", "-c", "npm run develop"]
+# Укажите порт, который будет использован приложением
+EXPOSE 1337
+
+# Запустите приложение
+CMD ["npm", "run", "develop"]
