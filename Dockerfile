@@ -1,23 +1,18 @@
-# Используйте официальный образ Node.js
 FROM node:18-alpine
+# Installing libvips-dev for sharp Compatibility
+RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev nasm bash vips-dev
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
 
-# Установите рабочую директорию внутри контейнера
-WORKDIR /usr/src/app
+WORKDIR /opt/
+COPY package.json package-lock.json ./
+RUN npm config set fetch-retry-maxtimeout 600000 -g && npm install
 
-# Копируйте файлы пакетов в контейнер
-COPY package*.json ./
-
-# Установите зависимости
-RUN npm install
-
-# Копируйте исходный код приложения в контейнер
+WORKDIR /opt/app
 COPY . .
-
-# Соберите приложение
-RUN npm run build
-
-# Укажите порт, который будет использован приложением
+ENV PATH /opt/node_modules/.bin:$PATH
+RUN chown -R node:node /opt/app
+USER node
+RUN ["npm", "run", "build"]
 EXPOSE 1337
-
-# Запустите приложение
 CMD ["npm", "run", "develop"]
